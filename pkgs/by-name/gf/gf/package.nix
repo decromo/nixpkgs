@@ -1,20 +1,21 @@
-{ lib
-, stdenv
-, makeWrapper
-, fetchFromGitHub
-, libX11
-, pkg-config
-, gdb
-, freetype
-, freetypeSupport ? true
-, withExtensions ? true
-, extraFlags ? ""
-, pluginsFile ? null
+{
+  lib,
+  stdenv,
+  makeWrapper,
+  fetchFromGitHub,
+  libX11,
+  pkg-config,
+  gdb,
+  freetype,
+  freetypeSupport ? true,
+  withExtensions ? true,
+  extraFlags ? "",
+  pluginsFile ? null,
 }:
 
 stdenv.mkDerivation {
   pname = "gf";
-  version = "unstable-2024-08-21";
+  version = "0-unstable-2024-08-21";
 
   src = fetchFromGitHub {
     repo = "gf";
@@ -23,9 +24,14 @@ stdenv.mkDerivation {
     hash = "sha256-Z8hW/GQjnnojoLeetrBlMnAJ9sP9ELv1lSQJjYPxtRc=";
   };
 
-  nativeBuildInputs = [ makeWrapper pkg-config ];
-  buildInputs = [ libX11 gdb ]
-    ++ lib.optional freetypeSupport freetype;
+  nativeBuildInputs = [
+    makeWrapper
+    pkg-config
+  ];
+  buildInputs = [
+    libX11
+    gdb
+  ] ++ lib.optional freetypeSupport freetype;
 
   patches = [
     ./build-use-optional-freetype-with-pkg-config.patch
@@ -40,9 +46,9 @@ stdenv.mkDerivation {
     '')
   ];
 
-   preConfigure = ''
-     patchShebangs build.sh
-   '';
+  preConfigure = ''
+    patchShebangs build.sh
+  '';
 
   buildPhase = ''
     runHook preBuild
@@ -58,7 +64,7 @@ stdenv.mkDerivation {
   '';
 
   postFixup = ''
-    wrapProgram $out/bin/gf2 --prefix PATH : ${lib.makeBinPath[ gdb ]}
+    wrapProgram $out/bin/gf2 --prefix PATH : ${lib.makeBinPath [ gdb ]}
   '';
 
   meta = with lib; {
